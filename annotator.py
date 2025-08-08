@@ -100,3 +100,16 @@ class VideoAnnotator(QMainWindow):
             with open(fname, "w", encoding="utf-8") as f:
                 json.dump(out, f, indent=2, ensure_ascii=False)
             QMessageBox.information(self, "保存成功", f"已保存 {len(out)} 个标注段到 {fname}")
+    
+    def keyPressEvent(self, event):
+        if not self.cap:
+            return
+
+        if event.key() in (Qt.Key_A, Qt.Key_Left):
+            new_frame = max(0, self.current_frame - 5)
+            self.show_frame(new_frame)
+        elif event.key() in (Qt.Key_D, Qt.Key_Right):
+            new_frame = min(self.frame_count - 1, self.current_frame + 5)
+            self.show_frame(new_frame)
+
+        event.accept()

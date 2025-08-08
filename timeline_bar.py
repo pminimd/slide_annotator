@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QPoint
 from PyQt5.QtGui import QPainter, QColor, QPen
 
 
@@ -45,11 +45,9 @@ class TimelineBar(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-
-        # draw background
         painter.fillRect(self.rect(), Qt.lightGray)
 
-        # draw colored segments
+        # 绘制已标注的彩色区段
         for ann in self.annotations:
             if 'label' in ann and ann['label']:
                 color = QColor(self.class_colors[ann['label']])
@@ -57,18 +55,29 @@ class TimelineBar(QWidget):
                 end_x = int(ann.get('end', self.frame_count - 1) / self.frame_count * self.width())
                 painter.fillRect(start_x, 0, end_x - start_x, self.height(), color)
 
-        # draw annotation points
+        # 绘制标注起点线
         pen = QPen(Qt.black, 2)
         painter.setPen(pen)
         for ann in self.annotations:
             x = int(ann['start'] / self.frame_count * self.width())
             painter.drawLine(x, 0, x, self.height())
 
-        # draw current frame pointer
+        # 绘制当前帧指示（加粗+三角形）
         pointer_x = int(self.current_frame / self.frame_count * self.width())
-        pen = QPen(Qt.blue, 2)
+        pen = QPen(Qt.blue, 3)
         painter.setPen(pen)
         painter.drawLine(pointer_x, 0, pointer_x, self.height())
 
+        # 三角形指针
+        pointer_size = 6
+        triangle_points = [
+            QPoint(pointer_x - pointer_size, 0),
+            QPoint(pointer_x + pointer_size, 0),
+            QPoint(pointer_x, pointer_size)
+        ]
+        painter.setBrush(Qt.blue)
+        painter.drawPolygon(*triangle_points)
+
         painter.end()
+
 
