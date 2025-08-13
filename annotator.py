@@ -24,7 +24,7 @@ class VideoAnnotator(QMainWindow):
 
         # 标注数据
         self.annotations = []
-        self.class_colors = {"A": Qt.green, "B": Qt.red, "C": Qt.yellow}
+        self.class_colors = {"A": Qt.green, "B": Qt.red, "C": Qt.yellow} # 将 A, B, C 改成你自己的类别
 
         # UI 元素
         self.frame_label = QLabel(self)
