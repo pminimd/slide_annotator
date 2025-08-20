@@ -14,7 +14,7 @@ class VideoAnnotator(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("视频分段标注工具")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1920, 1080)
 
         # 视频信息
         self.video_path = ""
@@ -24,22 +24,22 @@ class VideoAnnotator(QMainWindow):
 
         # 标注数据
         self.annotations = []
-        self.class_colors = {"A": Qt.green, "B": Qt.red, "C": Qt.yellow}
+        self.class_colors = {"normal": Qt.black, "put/fetch": Qt.green, "pour": Qt.red, "load_water": Qt.yellow}
 
         # UI 元素
         self.frame_label = QLabel(self)
-        self.frame_label.setGeometry(50, 50, 640, 360)
+        self.frame_label.setGeometry(50, 50, 1280, 720)
 
         self.select_btn = QPushButton("选择视频", self)
-        self.select_btn.setGeometry(50, 430, 100, 30)
+        self.select_btn.setGeometry(50, 800, 150, 40)
         self.select_btn.clicked.connect(self.select_video)
 
         self.save_btn = QPushButton("保存标注", self)
-        self.save_btn.setGeometry(170, 430, 100, 30)
+        self.save_btn.setGeometry(220, 800, 150, 40)
         self.save_btn.clicked.connect(self.save_annotations)
 
         self.timeline = TimelineBar(self)
-        self.timeline.setGeometry(50, 480, 640, 30)
+        self.timeline.setGeometry(50, 870, 1200, 50)
         self.timeline.frame_selected.connect(self.on_frame_selected)
         self.timeline.right_click_segment.connect(self.set_label_context)
 

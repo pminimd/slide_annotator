@@ -13,7 +13,7 @@ class TimelineBar(QWidget):
         self.annotations = []  # [{'start':int, 'end':int, 'label':str}]
         self.frame_count = 1
         self.current_frame = 0
-        self.class_colors = {"A": Qt.green, "B": Qt.red, "C": Qt.yellow}
+        self.class_colors = {"normal": Qt.black, "put/fetch": Qt.green, "pour": Qt.red, "load_water": Qt.yellow}
 
     def set_frame_count(self, count):
         self.frame_count = max(1, count)
