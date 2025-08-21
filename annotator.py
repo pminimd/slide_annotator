@@ -2,7 +2,9 @@ import cv2
 import json
 from PyQt5.QtWidgets import (
     QMainWindow, QPushButton, QFileDialog,
-    QLabel, QMenu, QAction, QMessageBox
+    QLabel, QMenu, QAction, QMessageBox,
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout,
+    QDesktopWidget
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QImage
@@ -14,7 +16,11 @@ class VideoAnnotator(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("视频分段标注工具")
-        self.setGeometry(100, 100, 1920, 1080)
+        
+        # 自动最大化窗口
+        screen = QDesktopWidget().screenGeometry()
+        self.resize(screen.width(), screen.height())
+        self.showMaximized()
 
         # 视频信息
         self.video_path = ""
@@ -26,20 +32,33 @@ class VideoAnnotator(QMainWindow):
         self.annotations = []
         self.class_colors = {"normal": Qt.black, "put/fetch": Qt.green, "pour": Qt.red, "load_water": Qt.yellow}
 
-        # UI 元素
-        self.frame_label = QLabel(self)
-        self.frame_label.setGeometry(50, 50, 1280, 720)
+        # ---------- 布局 ----------
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
 
-        self.select_btn = QPushButton("选择视频", self)
-        self.select_btn.setGeometry(50, 800, 150, 40)
+        layout = QVBoxLayout(central_widget)
+
+        # 视频显示 (自动缩放)
+        self.frame_label = QLabel()
+        self.frame_label.setAlignment(Qt.AlignCenter)
+        self.frame_label.setScaledContents(True)  # 自动缩放内容
+        layout.addWidget(self.frame_label, stretch=10)
+
+        # 按钮行
+        button_layout = QHBoxLayout()
+        self.select_btn = QPushButton("选择视频")
+        self.save_btn = QPushButton("保存标注")
+        button_layout.addWidget(self.select_btn)
+        button_layout.addWidget(self.save_btn)
+        layout.addLayout(button_layout, stretch=1)
+
+        # 时间轴
+        self.timeline = TimelineBar()
+        layout.addWidget(self.timeline, stretch=2)
+
+        # 信号绑定
         self.select_btn.clicked.connect(self.select_video)
-
-        self.save_btn = QPushButton("保存标注", self)
-        self.save_btn.setGeometry(220, 800, 150, 40)
         self.save_btn.clicked.connect(self.save_annotations)
-
-        self.timeline = TimelineBar(self)
-        self.timeline.setGeometry(50, 870, 1200, 50)
         self.timeline.frame_selected.connect(self.on_frame_selected)
         self.timeline.right_click_segment.connect(self.set_label_context)
 
